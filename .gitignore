@@ -1,3 +1,7 @@
 *__pycache__
-*build
-*rosa_cpp*
+build
+rosa_cpp*
+data
+output
+tokenizer
+logs
