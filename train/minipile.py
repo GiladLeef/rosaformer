@@ -1,0 +1,100 @@
+"""
+================================================================================
+# Copyright (c) 2025 Gilad Leef
+#
+# This software is provided for educational, research, and personal use only.
+# Commercial use, resale, or distribution for profit is strictly prohibited.
+# All modifications and derivative works must be distributed under the same license terms.
+#
+# Any disputes arising from the use of this software shall be governed by and construed in accordance with the laws of the State of Israel.
+# Exclusive jurisdiction for any such disputes shall lie with the competent courts located in Israel.
+================================================================================
+"""
+
+import torch
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+import model
+from utils import setupMultiproc, createTokenizer, prepareData, showCuda, showConfig
+from config import applyConfig, getMinipileConfig
+
+
+"""
+================================================================================
+Dataset Paths
+================================================================================
+"""
+
+cacheDir = "./data/minipile_cache"
+tokPath = "./tokenizer/minipile.json"
+dataPath = "./data/minipile_tokenized"
+
+tokVocab = 32000
+maxLen = 2048
+
+
+"""
+================================================================================
+Main Training
+================================================================================
+"""
+
+def main():
+    """Main training pipeline."""
+    print("="*80)
+    print("Rosaformer Model with ROSA - Minipile Training")
+    print("="*80)
+    
+    showCuda()
+    
+    applyConfig(model, getMinipileConfig())
+    model.DATASET_PATH = dataPath
+    model.USE_BF16 = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
+    
+    print("\nStep 1: Preparing tokenizer...")
+    tokenizer = createTokenizer(
+        savePath=tokPath,
+        dataName="JeanKaddour/minipile",
+        splitSpec="train[:10%]",
+        cacheDir=cacheDir,
+        vocabSize=tokVocab,
+        useStream=False
+    )
+    print(f"Tokenizer vocabulary size: {len(tokenizer)}")
+    
+    model.VOCAB_SIZE = len(tokenizer)
+    model.PAD_TOKEN_ID = tokenizer.pad_token_id
+    
+    print("\nStep 2: Preparing dataset...")
+    tokDataset = prepareData(
+        tokenizer=tokenizer,
+        dataName="JeanKaddour/minipile",
+        splitSpec="train",
+        cacheDir=cacheDir,
+        savePath=dataPath,
+        maxLen=maxLen,
+        useStream=False
+    )
+    print(f"Tokenized dataset size: {len(tokDataset)} examples")
+    
+    showConfig(model)
+    
+    print("Step 3: Starting training...")
+    print("(Training will be handled by model.main())\n")
+    
+    model.main()
+    
+    print("\n" + "="*80)
+    print("Training Complete!")
+    print("="*80)
+    print(f"Model saved to: {model.OUTPUT_DIR}")
+    print(f"Logs saved to: {model.LOGGING_DIR}")
+
+
+if __name__ == "__main__":
+    setupMultiproc()
+    main()
+

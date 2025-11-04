@@ -1,0 +1,9 @@
+transformers
+datasets
+tokenizers
+numba
+tensorboard
+accelerate
+numpy
+tqdm
+ninja
