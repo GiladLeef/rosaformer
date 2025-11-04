@@ -34,7 +34,7 @@ maxNewTokens = 64
 temperature = 0.8
 topP = 0.9
 topK = 50
-repetitionPenalty = 1.1
+repetitionPenalty = 2.0
 
 
 def findLatestCheckpoint(outputDir: str):
