@@ -32,7 +32,7 @@ cacheDir = "./data/minipile_cache"
 tokPath = "./tokenizer/minipile.json"
 dataPath = "./data/minipile_tokenized"
 
-tokVocab = 32000
+tokVocab = 10000
 maxLen = 2048
 
 

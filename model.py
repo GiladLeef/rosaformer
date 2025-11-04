@@ -396,7 +396,7 @@ class RosaformerConfig(PretrainedConfig):
     """
     def __init__(
         self,
-        vocab_size=32000,
+        vocab_size=10000,
         hidden_size=512,
         intermediate_size=2048,
         num_hidden_layers=8,
