@@ -1,1 +1,4 @@
+This is an LLM powered by a decoder-only Transformer + RNN with a ROSA mechanism.
+It can be used out of the box to train models on the mini-pile or full-pile datasets (See the training folder).
+
 Would not have been possible without previous work by @BlinkDL
