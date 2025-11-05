@@ -1465,9 +1465,11 @@ def main():
     
     tokenizerPath = "./tokenizer/minipile.json"
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizerPath)
-    tokenizer.pad_token = tokenizer.eos_token
     if tokenizer.pad_token is None:
-        tokenizer.add_special_tokens({'pad_token': '<pad>'})
+        if tokenizer.eos_token is not None:
+            tokenizer.pad_token = tokenizer.eos_token
+        else:
+            tokenizer.add_special_tokens({'pad_token': '<pad>'})
     
     dataCollator = DataCollatorForLanguageModeling(
         tokenizer=tokenizer,
